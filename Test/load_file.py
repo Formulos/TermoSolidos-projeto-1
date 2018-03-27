@@ -56,7 +56,7 @@ def load(file):
                         temp.append((palavra))
                         palavra = ""
                         continue # skip to next line on error
-        palavra = ""
+                        
         if case == 1 and len(temp) != 0:
             COORDINATES.append(temp)  # case 1            
         if case == 2 and len(temp) != 0:
