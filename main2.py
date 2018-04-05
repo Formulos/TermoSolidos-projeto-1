@@ -1,28 +1,22 @@
-from math import *
+import math
+import numpy as np
 
 class FILE():
 
     def __init__(self):
-        self.COORDINATES           = []
-        self.ELEMENT_GROUPS        = []
-        self.INCIDENCES            = []
-        self.MATERIALS             = []
-        self.GEOMETRIC_PROPERTIES  = []
-        self.BCNODES               = []
-        self.LOADS                 = []
         self.load("TermoSol.txt")
 
     def load(self, file):
 
         file = open(file, 'r')
 
-        COORDINATES = [] # case 1
-        ELEMENT_GROUPS = [] # case 2
-        INCIDENCES = [] # case 3
-        MATERIALS = [] # case 4
-        GEOMETRIC_PROPERTIES = [] # case 5
-        BCNODES = [] # case 6
-        LOADS = [] # case 7
+        self.COORDINATES = [] # case 1
+        self.ELEMENT_GROUPS = [] # case 2
+        self.INCIDENCES = [] # case 3
+        self.MATERIALS = [] # case 4
+        self.GEOMETRIC_PROPERTIES = [] # case 5
+        self.BCNODES = [] # case 6
+        self.LOADS = [] # case 7
 
         case = 0
         temp = []
@@ -53,7 +47,7 @@ class FILE():
 
             else:
                 for number in line:
-                    print(number)
+                    #print(number)
                     if number != " " : #start of something
                         palavra += number
                     else:
@@ -62,25 +56,30 @@ class FILE():
                             palavra = ""
 
                         except ValueError:  # if conversion to integer fails display a warning
-                            print ("Warning: cannot convert to number string '%s'" % palavra)
+                            #print ("Warning: cannot convert to number string '%s'" % palavra)
                             temp.append((palavra))
                             palavra = ""
                             continue # skip to next line on error
+                            
+            
 
             if case == 1 and len(temp) != 0:
-                COORDINATES.append(temp)  # case 1
+                del temp[-1]
+                self.COORDINATES.append(temp)  # case 1
             if case == 2 and len(temp) != 0:
-                ELEMENT_GROUPS.append(temp) # case 2
+                self.ELEMENT_GROUPS.append(temp) # case 2
             if case == 3 and len(temp) != 0:
-                INCIDENCES.append(temp) # case 3
+                
+                self.INCIDENCES.append(temp) # case 3
+                
             if case == 4 and len(temp) != 0:
-                MATERIALS.append(temp) # case 4
+                self.MATERIALS.append(temp) # case 4
             if case == 5 and len(temp) != 0:
-                GEOMETRIC_PROPERTIES.append(temp) # case 5
+                self.GEOMETRIC_PROPERTIES.append(temp) # case 5
             if case == 6 and len(temp) != 0:
-                BCNODES.append(temp) # case 6
+                self.BCNODES.append(temp) # case 6
             if case == 7 and len(temp) != 0:
-                LOADS.append(temp) # case 7
+                self.LOADS.append(temp) # case 7
 
 
         file.close()
@@ -91,6 +90,7 @@ class FILE():
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
+        print(self.tmp.INCIDENCES)
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.INCIDENCES   = self.tmp.INCIDENCES[element]
