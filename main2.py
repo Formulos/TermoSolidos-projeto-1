@@ -1,6 +1,6 @@
 from math import *
 
-class ArquivoTXT():
+class FILE():
 
     def __init__(self):
         self.COORDINATES           = []
@@ -88,70 +88,38 @@ class ArquivoTXT():
     #    print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
 
-class Elemento():
-    def __init__(self, numeroElemento):
-        self.numeroE = numeroElemento - 1
-        self.data = ArquivoTXT()
+class Element():
+    def __init__(self, element):
+        self.tmp = FILE()
+        self.INCIDENCES   = self.tmp.INCIDENCES[self.element-1]
+        self.MATERIALS    = self.tmp.MATERIALS[self.element-1]
+        self.PROPERTIES   = self.tmp.PROPERTIES[self.element-1]
+#       print(self.INCIDENCES)
 
-        self.incidencias   = self.data.matrizIndices[self.numeroE]
-        self.material      = self.data.matrizMateriais[self.numeroE]
-        self.propriedade   = self.data.matrizPropriedades[self.numeroE]
-        print(self.propriedade)
-        self.main()
 
     def main(self):
-        self.getCordenadas()
-        self.comprimento()
         self.cos()
         self.sin()
         self.area()
-        self.getMatrixRigidez()
+        self.COORDINATES()
+        self.lengh()
 
-    def getCordenadas(self):
-        self.coordenadas = [[0,0],[0,0]]
+    def COORDINATES(self):
+        self.c = [[0,0],[0,0]]
 
-        self.coordenadas[0][0] = self.data.matrizCordenadas[int(self.incidencias[1] - 1)][1]
-        self.coordenadas[0][1] = self.data.matrizCordenadas[int(self.incidencias[1] - 1)][2]
+        self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
+        self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
+        self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
+        self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
 
-        self.coordenadas[1][0] = self.data.matrizCordenadas[int(self.incidencias[2] - 1)][1]
-        self.coordenadas[1][1] = self.data.matrizCordenadas[int(self.incidencias[2] - 1)][2]
+    def lengh():
+        #bla
 
-    def comprimento(self):
-        self.comprimento = sqrt(pow(self.coordenadas[0][0] - self.coordenadas[1][0], 2) + pow(self.coordenadas[0][1] - self.coordenadas[1][1], 2))
-        print(self.comprimento)
+    def cos():
+        #bla
 
-    def cos(self):
-        if(self.coordenadas[0][1] == self.coordenadas[1][1]):
-            self.c =  1
-        elif(self.coordenadas[0][0] == self.coordenadas[1][0]):
-            self.c =  0
-        else:
-            self.c = abs(self.coordenadas[0][1] - self.coordenadas[1][1])/(self.comprimento)
-        print("cos :",self.c)
+    def sin():
+        #bla
 
-    def sin(self):
-        if(self.coordenadas[0][1] == self.coordenadas[1][1]):
-            self.s =  0
-        elif(self.coordenadas[0][0] == self.coordenadas[1][0]):
-            self.s =  1
-        else:
-            self.s = abs(self.coordenadas[0][0] - self.coordenadas[1][0])/(self.comprimento)
-        print("sen :",self.s)
-
-    def area(self):
-        self.area = self.propriedade[self.numeroE + 1]
-        print("Area:", self.area)
-
-    def getMatrixRigidez(self):
-        print(self.material[0])
-        k = int((self.material[0] * self.area) / self.comprimento)
-        print(k)
-        matriz =    [[self.c**2 , self.c* self.s , -self.c**2, -self.c* self.s ],
-                                 [self.c* self.s  , self.s**2 , -self.c* self.s , -self.s**2 ],
-                                 [-self.c**2, -self.c* self.s , self.c**2 , self.c* self.s   ],
-                                 [-self.c* self.s , -self.s**2, self.c* self.s  , self.s**2 ]]
-        self.matrixRigidez = k * matriz
-        print(self.matrixRigidez)
-
-
-Elemento(1)
+    def area():
+        self.area = self.PROPERTIES[self.element]
