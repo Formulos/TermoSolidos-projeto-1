@@ -91,9 +91,12 @@ class FILE():
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
-        self.INCIDENCES   = self.tmp.INCIDENCES[self.element-1]
-        self.MATERIALS    = self.tmp.MATERIALS[self.element-1]
-        self.PROPERTIES   = self.tmp.PROPERTIES[self.element-1]
+
+        #In case of elements starting in 1, make element -1 (else, make element)
+        self.INCIDENCES   = self.tmp.INCIDENCES[element]
+        self.MATERIALS    = self.tmp.MATERIALS[element]
+        self.PROPERTIES   = self.tmp.PROPERTIES[element]
+        self.COORDINATES = self.tmp.COORDINATES[element]
 #       print(self.INCIDENCES)
 
 
@@ -103,36 +106,40 @@ class Element():
         self.area()
         self.COORDINATES()
         self.lengh()
+        self.thick()
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
 
-        self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
-        self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
-        self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
-        self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
+        self.c[0][1] = self.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
+        self.c[1][0] = self.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
+        self.c[1][1] = self.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
+        self.c[0][0] = self.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
+
+    def E():
+        self.E = self.MATERIALS[0]
+
+    def A():
+        self.A = self.PROPERTIES[self.element + 1]
 
     def lengh():
         self.lengh = sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
-        return self.area
 
     def cos():
-        return abs(self.c[0][1] - self.c[1][1])/(self.lengh))
+        self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
 
     def sin():
-        return abs(self.c[0][0] - self.c[1][0])/(self.lengh))
-
-    def area():
-        self.area = self.PROPERTIES[self.element]
-        return self.area
+        self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
 
     def rigidez():
-        #c =
-        #s =
+        c = self.cos
+        s = self.sin
         mds = np.array([[c**2, c*s, -(c**2), -(c*s)],
                         [c*s, s**2, -(c*s), -(s**2)],
                         [-(c**2), -(c*s), c**2, c*s],
                         [-(c*s), -(s**2), c*s, s**2]])
-        #k =
+        k = int((self.A * self.E) / self.lengh)
         self.rigidez = k * mds
         print(self.rigidez)
+
+Element(2)
