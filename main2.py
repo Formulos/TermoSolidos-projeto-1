@@ -114,12 +114,25 @@ class Element():
 
     def lengh():
         self.lengh = sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
+        return self.area
 
     def cos():
-        #bla
+        return abs(self.c[0][1] - self.c[1][1])/(self.lengh))
 
     def sin():
-        #bla
+        return abs(self.c[0][0] - self.c[1][0])/(self.lengh))
 
     def area():
         self.area = self.PROPERTIES[self.element]
+        return self.area
+
+    def rigidez():
+        #c =
+        #s =
+        mds = np.array([[c**2, c*s, -(c**2), -(c*s)],
+                        [c*s, s**2, -(c*s), -(s**2)],
+                        [-(c**2), -(c*s), c**2, c*s],
+                        [-(c*s), -(s**2), c*s, s**2]])
+        #k =
+        self.rigidez = k * mds
+        print(self.rigidez)
