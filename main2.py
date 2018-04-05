@@ -113,7 +113,7 @@ class Element():
         self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
 
     def lengh():
-        #bla
+        self.lengh = sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
 
     def cos():
         #bla
