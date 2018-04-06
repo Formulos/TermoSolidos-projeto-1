@@ -80,7 +80,14 @@ class FILE():
                 self.BCNODES.append(temp) # case 6
             if case == 7 and len(temp) != 0:
                 self.LOADS.append(temp) # case 7
-
+        
+        self.COORDINATES.pop(-1)
+        self.ELEMENT_GROUPS.pop(-1)
+        self.INCIDENCES.pop(-1)
+        self.MATERIALS.pop(-1)
+        self.GEOMETRIC_PROPERTIES.pop(-1)
+        self.BCNODES.pop(-1)
+        self.LOADS.pop(-1)
 
         file.close()
 
@@ -90,7 +97,7 @@ class FILE():
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
-        print(self.tmp.INCIDENCES)
+        #print(self.tmp.INCIDENCES)
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.INCIDENCES   = self.tmp.INCIDENCES[element]
@@ -98,6 +105,7 @@ class Element():
         self.GEOMETRIC_PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
         self.COORDINATES = self.tmp.COORDINATES[element]
 #       print(self.INCIDENCES)
+        self.main()
 
 
     def main(self):
@@ -116,22 +124,22 @@ class Element():
         self.c[1][1] = self.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
         self.c[0][0] = self.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
 
-    def E():
+    def E(self):
         self.E = self.MATERIALS[0]
 
-    def A():
+    def A(self):
         self.A = self.PROPERTIES[self.element + 1]
 
-    def lengh():
-        self.lengh = sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
+    def lengh(self):
+        self.lengh = math.sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
 
-    def cos():
+    def cos(self):
         self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
 
-    def sin():
+    def sin(self):
         self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
 
-    def rigidez():
+    def rigidez(self):
         c = self.cos
         s = self.sin
         mds = np.array([[c**2, c*s, -(c**2), -(c*s)],
@@ -142,4 +150,4 @@ class Element():
         self.rigidez = k * mds
         print(self.rigidez)
 
-Element(2)
+Element(-1)
