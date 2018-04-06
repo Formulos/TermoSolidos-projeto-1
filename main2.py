@@ -62,16 +62,12 @@ class FILE():
                             continue # skip to next line on error
                             
             
-
             if case == 1 and len(temp) != 0:
-                del temp[-1]
                 self.COORDINATES.append(temp)  # case 1
             if case == 2 and len(temp) != 0:
                 self.ELEMENT_GROUPS.append(temp) # case 2
             if case == 3 and len(temp) != 0:
-                
                 self.INCIDENCES.append(temp) # case 3
-                
             if case == 4 and len(temp) != 0:
                 self.MATERIALS.append(temp) # case 4
             if case == 5 and len(temp) != 0:
@@ -80,6 +76,14 @@ class FILE():
                 self.BCNODES.append(temp) # case 6
             if case == 7 and len(temp) != 0:
                 self.LOADS.append(temp) # case 7
+                
+        self.COORDINATES.pop(-1)
+        self.ELEMENT_GROUPS.pop(-1)
+        self.INCIDENCES.pop(-1)
+        self.MATERIALS.pop(-1)
+        self.GEOMETRIC_PROPERTIES.pop(-1)
+        self.BCNODES.pop(-1)
+        self.LOADS.pop(-1)
 
 
         file.close()
