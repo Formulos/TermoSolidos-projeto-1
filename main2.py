@@ -110,11 +110,10 @@ class Element():
     def __init__(self, element):
         self.tmp = FILE()
 
-
         #In case of elements starting in 1, make element -1 (else, make element)
-        self.INCIDENCES   = self.tmp.INCIDENCES[element-1]
-        self.MATERIALS    = self.tmp.MATERIALS[element-1]
-        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element-1]
+        self.INCIDENCES   = self.tmp.INCIDENCES[element]
+        self.MATERIALS    = self.tmp.MATERIALS[element]
+        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
         self.liberdade = []
         self.c = []
         self.main()
@@ -122,7 +121,6 @@ class Element():
 
     def main(self):
         self.COORDINATES()
-        
         self.cos()
         self.sin()
         self.A()
@@ -135,6 +133,7 @@ class Element():
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
+
         #print(self.tmp.COORDINATES)
         print(self.tmp.INCIDENCES[1])
         print(self.tmp.COORDINATES[self.INCIDENCES [1] ] [2])
@@ -142,7 +141,6 @@ class Element():
         self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
         self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
         self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
-        
 
     def E(self):
         self.E = self.MATERIALS[0]
@@ -154,12 +152,21 @@ class Element():
         self.lengh = math.sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
 
     def cos(self):
-
-        self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
+        if(self.c[0][1] == self.c[1][1]):
+            self.cos = 1
+        elif(self.c[0][0] == self.c[1][0]):
+            self.cos = 0
+        else:
+            self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
         print(self.tmp.COORDINATES)
 
     def sin(self):
-        self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
+        if(self.c[0][1] == self.c[1][1]):
+            self.cos = 0
+        elif(self.c[0][0] == self.c[1][0]):
+            self.cos = 1
+        else:
+            self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
         print(self.tmp.INCIDENCES)
 
     def rigidez(self):
