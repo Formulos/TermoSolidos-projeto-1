@@ -93,7 +93,7 @@ class FILE():
         self.LOADS.pop(-1)
 
 
-    #    print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
+        print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
 
 class Element():
@@ -118,7 +118,6 @@ class Element():
         self.lengh()
         self.thick()
         self.rigidez()
-        self.getMatrizRigidez()
         self.liberty()
         self.status()
 
@@ -139,6 +138,7 @@ class Element():
         self.lengh = math.sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
 
     def cos(self):
+
         self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
         print(self.tmp.COORDINATES)
 
@@ -156,7 +156,7 @@ class Element():
         for e in mds:
             self.matriz_intermediaria = []
             for i in e:
-                self.atriz_intermediaria.append(int((E * A) / self.lengh)*i)
+                self.matriz_intermediaria.append(int((E * A) / self.lengh)*i)
             self.final_rigidez.append(self.matriz_intermediaria)
 
     def liberty(self):
@@ -164,7 +164,7 @@ class Element():
                 self.liberty.append((i * 2) -1)
                 self.liberty.append(i * 2)
 
-    def status(self):
+    def results(self):
         print("Elemento: ",self.element -1)
         print("Incidencias: ",self.INCIDENCES)
         print("Comprimebto: ",self.lengh)
