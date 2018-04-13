@@ -89,8 +89,8 @@ class FILE():
         self.GEOMETRIC_PROPERTIES.pop(-1)
         self.BCNODES.pop(-1)
         self.LOADS.pop(-1)
-        
-        
+
+
 
 
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
@@ -99,7 +99,6 @@ class Element():
     def __init__(self, element):
         self.tmp = FILE()
 
-        
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.INCIDENCES   = self.tmp.INCIDENCES[element-1]
