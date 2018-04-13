@@ -64,14 +64,12 @@ class FILE():
 
 
             if case == 1 and len(temp) != 0:
-                del temp[-1]
+                #del temp[-1]
                 self.COORDINATES.append(temp)  # case 1
             if case == 2 and len(temp) != 0:
                 self.ELEMENT_GROUPS.append(temp) # case 2
             if case == 3 and len(temp) != 0:
-
                 self.INCIDENCES.append(temp) # case 3
-
             if case == 4 and len(temp) != 0:
                 self.MATERIALS.append(temp) # case 4
             if case == 5 and len(temp) != 0:
@@ -93,12 +91,17 @@ class FILE():
         self.LOADS.pop(-1)
 
 
-    #    print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
+
+
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
 
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
+
+        print(self.tmp.MATERIALS)
+
+
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.INCIDENCES   = self.tmp.INCIDENCES[element-1]
