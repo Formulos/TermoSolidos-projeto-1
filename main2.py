@@ -83,12 +83,23 @@ class FILE():
 
 
         self.COORDINATES.pop(-1)
+        self.COORDINATES.pop(0)
+        
         self.ELEMENT_GROUPS.pop(-1)
+        self.ELEMENT_GROUPS.pop(0)
+        
         self.INCIDENCES.pop(-1)
+        self.INCIDENCES.pop(0)
+        
         self.MATERIALS.pop(-1)
+        self.MATERIALS.pop(0)
+        
         self.GEOMETRIC_PROPERTIES.pop(-1)
+        self.GEOMETRIC_PROPERTIES.pop(0)
+        
         self.BCNODES.pop(-1)
-        self.LOADS.pop(-1)
+        self.BCNODES.pop(0)
+        #self.LOADS.pop(-1)
 
 
 
@@ -124,7 +135,7 @@ class Element():
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
-        print(self.tmp.COORDINATES)
+        #print(self.tmp.COORDINATES)
         print(self.tmp.INCIDENCES[1])
         print(self.tmp.COORDINATES[self.INCIDENCES [1] ] [2])
         self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
