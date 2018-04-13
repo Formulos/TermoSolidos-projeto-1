@@ -98,9 +98,7 @@ class FILE():
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
-        
-        print(self.tmp.MATERIALS)
-        
+
         
 
         #In case of elements starting in 1, make element -1 (else, make element)
@@ -113,11 +111,12 @@ class Element():
 
 
     def main(self):
+        self.COORDINATES()
+        
         self.cos()
         self.sin()
         self.A()
         self.E()
-        self.COORDINATES()
         self.lengh()
         self.thick()
         self.rigidez()
@@ -126,10 +125,14 @@ class Element():
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
+        print(self.tmp.COORDINATES)
+        print(self.tmp.INCIDENCES[1])
+        print(self.tmp.COORDINATES[self.INCIDENCES [1] ] [2])
         self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
         self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
         self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
         self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
+        
 
     def E(self):
         self.E = self.MATERIALS[0]
