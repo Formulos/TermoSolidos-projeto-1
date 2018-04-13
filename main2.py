@@ -60,8 +60,8 @@ class FILE():
                             temp.append((palavra))
                             palavra = ""
                             continue # skip to next line on error
-                            
-            
+
+
 
             if case == 1 and len(temp) != 0:
                 del temp[-1]
@@ -69,9 +69,9 @@ class FILE():
             if case == 2 and len(temp) != 0:
                 self.ELEMENT_GROUPS.append(temp) # case 2
             if case == 3 and len(temp) != 0:
-                
+
                 self.INCIDENCES.append(temp) # case 3
-                
+
             if case == 4 and len(temp) != 0:
                 self.MATERIALS.append(temp) # case 4
             if case == 5 and len(temp) != 0:
@@ -80,7 +80,10 @@ class FILE():
                 self.BCNODES.append(temp) # case 6
             if case == 7 and len(temp) != 0:
                 self.LOADS.append(temp) # case 7
-        
+
+        file.close()
+
+'''
         self.COORDINATES.pop(-1)
         self.ELEMENT_GROUPS.pop(-1)
         self.INCIDENCES.pop(-1)
@@ -88,8 +91,7 @@ class FILE():
         self.GEOMETRIC_PROPERTIES.pop(-1)
         self.BCNODES.pop(-1)
         self.LOADS.pop(-1)
-
-        file.close()
+'''
 
     #    print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
@@ -97,57 +99,79 @@ class FILE():
 class Element():
     def __init__(self, element):
         self.tmp = FILE()
-        #print(self.tmp.INCIDENCES)
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.INCIDENCES   = self.tmp.INCIDENCES[element]
         self.MATERIALS    = self.tmp.MATERIALS[element]
-        self.GEOMETRIC_PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
-        self.COORDINATES = self.tmp.COORDINATES[element]
-#       print(self.INCIDENCES)
+        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
+        self.liberdade = []
+        self.c = []
         self.main()
 
 
     def main(self):
         self.cos()
         self.sin()
-        self.area()
+        self.A()
+        self.E()
         self.COORDINATES()
         self.lengh()
         self.thick()
+        self.rigidez()
+        self.getMatrizRigidez()
+        self.liberty()
+        self.status()
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
-
-        self.c[0][1] = self.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
-        self.c[1][0] = self.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
-        self.c[1][1] = self.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
-        self.c[0][0] = self.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
+        self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
+        self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
+        self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
+        self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
 
     def E(self):
         self.E = self.MATERIALS[0]
 
     def A(self):
-        self.A = self.PROPERTIES[self.element + 1]
+        self.A = self.PROPERTIES[1]
 
     def lengh(self):
         self.lengh = math.sqrt(pow(self.lengh[0][0] - self.lengh[1][0], 2) + pow(self.lengh[0][1] - self.lengh[1][1], 2))
 
     def cos(self):
         self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
+        print(self.tmp.COORDINATES)
 
     def sin(self):
         self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
+        print(self.tmp.INCIDENCES)
 
     def rigidez(self):
-        c = self.cos
-        s = self.sin
-        mds = np.array([[c**2, c*s, -(c**2), -(c*s)],
-                        [c*s, s**2, -(c*s), -(s**2)],
-                        [-(c**2), -(c*s), c**2, c*s],
-                        [-(c*s), -(s**2), c*s, s**2]])
-        k = int((self.A * self.E) / self.lengh)
-        self.rigidez = k * mds
-        print(self.rigidez)
+        mds =    [[self.cos**2 , self.cos* self.sin , -self.cos**2, -self.cos* self.sin ],
+                    [self.cos* self.sin  , self.sin**2 , -self.cos* self.sin , -self.sin**2 ],
+                    [-self.cos**2, -self.cos* self.sin , self.cos**2 , self.cos* self.sin   ],
+                    [-self.cos* self.sin , -self.sin**2, self.cos* self.sin  , self.sin**2 ]]
 
-Element(-1)
+        self.final_rigidez = []
+        for e in mds:
+            self.matriz_intermediaria = []
+            for i in e:
+                self.atriz_intermediaria.append(int((E * A) / self.lengh)*i)
+            self.final_rigidez.append(self.matriz_intermediaria)
+
+    def liberty(self):
+        for i in (self.INCIDENCES[1:]):
+                self.liberty.append((i * 2) -1)
+                self.liberty.append(i * 2)
+
+    def status(self):
+        print("Elemento: ",self.element -1)
+        print("Incidencias: ",self.INCIDENCES)
+        print("Comprimebto: ",self.lengh)
+        print("Propriedade: ",self.propriedade)
+        print("Liberdade:", self.liberdade )
+        print("Rigidez: ",self.final_rigidez)
+        print()
+
+
+Element(1)
