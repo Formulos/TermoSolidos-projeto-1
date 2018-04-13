@@ -83,7 +83,7 @@ class FILE():
 
         file.close()
 
-'''
+
         self.COORDINATES.pop(-1)
         self.ELEMENT_GROUPS.pop(-1)
         self.INCIDENCES.pop(-1)
@@ -91,7 +91,7 @@ class FILE():
         self.GEOMETRIC_PROPERTIES.pop(-1)
         self.BCNODES.pop(-1)
         self.LOADS.pop(-1)
-'''
+
 
     #    print(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
     #    return(COORDINATES,ELEMENT_GROUPS,INCIDENCES,GEOMETRIC_PROPERTIES,BCNODES,LOADS)
@@ -101,9 +101,9 @@ class Element():
         self.tmp = FILE()
 
         #In case of elements starting in 1, make element -1 (else, make element)
-        self.INCIDENCES   = self.tmp.INCIDENCES[element]
-        self.MATERIALS    = self.tmp.MATERIALS[element]
-        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
+        self.INCIDENCES   = self.tmp.INCIDENCES[element-1]
+        self.MATERIALS    = self.tmp.MATERIALS[element-1]
+        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element-1]
         self.liberdade = []
         self.c = []
         self.main()
