@@ -148,13 +148,26 @@ class Element():
         self.lengh = math.sqrt(pow(self.c[0][0] - self.c[1][0], 2) + pow(self.c[0][1] - self.c[1][1], 2))
 
     def rigidez(self):
-        self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
-        self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
+        #cosseno
+        if(self.c[0][1] == self.c[1][1]):
+            self.cos = 1
+        elif(self.c[0][0] == self.c[1][0]):
+            self.cos = 0
+        else:
+            self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
+        #seno
+        if(self.c[0][1] == self.c[1][1]):
+            self.sin = 0
+        elif(self.c[0][0] == self.c[1][0]):
+            self.sin = 1
+        else:
+            self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
+        #matriz de senos e cossenos
         mds =    [[self.cos**2 , self.cos*self.sin , -self.cos**2, -self.cos*self.sin ],
                     [self.cos* self.sin  , self.sin**2 , -self.cos* self.sin , -self.sin**2 ],
                     [-self.cos**2, -self.cos* self.sin , self.cos**2 , self.cos* self.sin   ],
                     [-self.cos* self.sin , -self.sin**2, self.cos* self.sin  , self.sin**2 ]]
-
+        #matriz de rigidez
         self.final_rigidez = []
         for i in mds:
             self.matriz_intermediaria = []
@@ -171,6 +184,8 @@ class Element():
         print("Elemento: ", self.element)
         print("Incidencias: ",self.INCIDENCES)
         print("Comprimebto: ",self.lengh)
+        print("seno: ", self.sin)
+        print("Cos: ", self.cos)
         print("Propriedade: ",self.PROPERTIES)
         print("Liberdade:", self.liberty)
         print("Rigidez: ",self.final_rigidez)
