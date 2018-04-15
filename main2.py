@@ -104,26 +104,37 @@ class FILE():
         self.c = []
 
 
-        print(self.COORDINATES,self.ELEMENT_GROUPS,self.INCIDENCES,self.GEOMETRIC_PROPERTIES,self.BCNODES,self.LOADS)
+        #print(self.COORDINATES,self.ELEMENT_GROUPS,self.INCIDENCES,self.GEOMETRIC_PROPERTIES,self.BCNODES,self.LOADS)
 
 class Element():
-    def __init__(self, element):
+    def __init__(self):
         self.tmp = FILE()
 
         #In case of elements starting in 1, make element -1 (else, make element)
-        self.element = element
-        self.INCIDENCES   = self.tmp.INCIDENCES[element]
-        self.MATERIALS    = self.tmp.MATERIALS[element]
-        self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[element]
-        self.liberty = []
-        self.main()
+        self.matrizes_regidez = [] #todas as matrizes de rigidez de cada elemto em uma [[[141000, 0, -141000, 0], [0, 0, 0, 0]], [[0, 0, 0, 0], [0, 188000, 0, -188000]]] listas de listas de listas triple yammy
+        self.complete_liberty = [] # todos os graues de liberdade em ordem cresente de elemento
+        self.higest_liberty = 0 #fala quantas linhas e colunas a matriz combal vai ter, nota: haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa please kill me
+        for i in range(len(self.tmp.COORDINATES)): 
+            self.element = i
+            self.INCIDENCES   = self.tmp.INCIDENCES[self.element]
+            self.MATERIALS    = self.tmp.MATERIALS[self.element]
+            self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[self.element]
+            self.liberty = []
+            
+            self.rigidez_individual()
+            
+        print(self.complete_liberty)
+        self.init_matrix_global()
+        self.fill_matriz_global()
 
 
-    def main(self):
+    def rigidez_individual(self):
+        
+        
         self.COORDINATES()
-        self.E()
-        self.A()
-        self.lengh()
+        self.get_E()
+        self.get_A()
+        self.get_lengh()
         self.rigidez()
         self.matrixlib()
         self.results()
@@ -138,13 +149,13 @@ class Element():
         self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
         self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
 
-    def E(self):
+    def get_E(self):
         self.E = self.MATERIALS[0]
 
-    def A(self):
+    def get_A(self):
         self.A = self.PROPERTIES[1]
 
-    def lengh(self):
+    def get_lengh(self):
         self.lengh = math.sqrt(pow(self.c[0][0] - self.c[1][0], 2) + pow(self.c[0][1] - self.c[1][1], 2))
 
     def rigidez(self):
@@ -170,18 +181,25 @@ class Element():
         #matriz de rigidez
         self.final_rigidez = []
         for i in mds:
-            self.matriz_intermediaria = []
+            matriz_intermediaria = []
             for j in i:
-                self.matriz_intermediaria.append(int((self.E * self.A) / self.lengh)*j)
-            self.final_rigidez.append(self.matriz_intermediaria)
+                matriz_intermediaria.append(int((self.E * self.A) / self.lengh)*j)
+            self.final_rigidez.append(matriz_intermediaria)
+        self.matrizes_regidez.append(self.final_rigidez)
 
     def matrixlib(self):
         for i in (self.INCIDENCES[1:]):
                 self.liberty.append((i * 2) -1)
                 self.liberty.append(i * 2)
+                
+        temp = max(self.liberty)
+        if temp > self.higest_liberty: #acha a maior liberdade
+            self.higest_liberty = temp
+                    
+        self.complete_liberty.append(self.liberty)
 
     def results(self):
-        print("Elemento: ", self.element)
+        print("Elemento: ", self.element + 1)
         print("Incidencias: ",self.INCIDENCES)
         print("Comprimebto: ",self.lengh)
         print("seno: ", self.sin)
@@ -190,6 +208,20 @@ class Element():
         print("Liberdade:", self.liberty)
         print("Rigidez: ",self.final_rigidez)
         print()
+        
+    def init_matrix_global(self):
+        self.global_matrix = []
+        int_high = int(self.higest_liberty)
+        for i in range(int_high):
+             self.global_matrix.append([0] * int_high)
+        
+        
+    def fill_matriz_global(self):
+        print(self.global_matrix)
+        for i in range(len(self.complete_liberty)):
+            print('elemento',i)
+            for j in self.complete_liberty[i]:
+                print(j)
 
 
-Element(1)
+Element()
