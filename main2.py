@@ -1,5 +1,5 @@
 import math
-import numpy as np
+#import numpy as np
 
 class FILE():
 
@@ -123,7 +123,6 @@ class Element():
             
             self.rigidez_individual()
             
-        print(self.complete_liberty)
         self.init_matrix_global()
         self.fill_matriz_global()
 
@@ -216,12 +215,30 @@ class Element():
              self.global_matrix.append([0] * int_high)
         
         
-    def fill_matriz_global(self):
-        print(self.global_matrix)
-        for i in range(len(self.complete_liberty)):
-            print('elemento',i)
-            for j in self.complete_liberty[i]:
-                print(j)
+    def fill_matriz_global(self): # isso so demorou minha sanidade para fazer mas vou tentar explicar
+        #print(self.global_matrix)
+        for i in range(len(self.complete_liberty)): #percorre todos os graus de liberdade (as listas dentro dos graus de liberdade)
+
+            current_colun = 0
+            current_line = 0
+            
+            for j in self.complete_liberty[i]: #percorre todos os elementos dentro de uma das listas dos graus de liberdade
+                linha = int(j) -1 #a linha que em que o elemento da matrix de rigidez especifica vai ser esse
+                
+                for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
+                    coluna = int(h) -1 #a coluna do elemento da matriz de rigidez não global vai ser esse
+                    self.global_matrix[linha][coluna] += self.matrizes_regidez[i][current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
+                    current_colun += 1
+                    
+                current_colun = 0
+                current_line += 1
+        """
+        basicamente as current* percorrem a matrix especifica
+        os linhas e colunas "calculam" onde aquele elemento da matriz especifica deve ser inserido na matrix global
+        """
+                
+        print("Matriz global final:",self.global_matrix)
+                
 
 
 Element()
