@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import math
 #import numpy as np
 
-class FILE():
+class read_FILE():
 
     def __init__(self):
         self.load("TermoSol.txt")
@@ -108,17 +110,17 @@ class FILE():
 
 class Element():
     def __init__(self):
-        self.tmp = FILE()
+        self.file = read_FILE()
 
         #In case of elements starting in 1, make element -1 (else, make element)
         self.matrizes_regidez = [] #todas as matrizes de rigidez de cada elemto em uma [[[141000, 0, -141000, 0], [0, 0, 0, 0]], [[0, 0, 0, 0], [0, 188000, 0, -188000]]] listas de listas de listas triple yammy
         self.complete_liberty = [] # todos os graues de liberdade em ordem cresente de elemento
         self.higest_liberty = 0 #fala quantas linhas e colunas a matriz combal vai ter, nota: haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa please kill me
-        for i in range(len(self.tmp.COORDINATES)): 
+        for i in range(len(self.file.INCIDENCES)): 
             self.element = i
-            self.INCIDENCES   = self.tmp.INCIDENCES[self.element]
-            self.MATERIALS    = self.tmp.MATERIALS[self.element]
-            self.PROPERTIES   = self.tmp.GEOMETRIC_PROPERTIES[self.element]
+            self.INCIDENCES   = self.file.INCIDENCES[self.element]
+            self.MATERIALS    = self.file.MATERIALS[self.element]
+            self.PROPERTIES   = self.file.GEOMETRIC_PROPERTIES[self.element]
             self.liberty = []
             
             self.rigidez_individual()
@@ -141,12 +143,12 @@ class Element():
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
 
-        #print(self.tmp.COORDINATES)
+        #print(self.file.COORDINATES)
 
-        self.c[0][1] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
-        self.c[1][0] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
-        self.c[1][1] = self.tmp.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
-        self.c[0][0] = self.tmp.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
+        self.c[0][1] = self.file.COORDINATES[int(self.INCIDENCES [1] - 1)][2]
+        self.c[1][0] = self.file.COORDINATES[int(self.INCIDENCES [2] - 1)][1]
+        self.c[1][1] = self.file.COORDINATES[int(self.INCIDENCES [2] - 1)][2]
+        self.c[0][0] = self.file.COORDINATES[int(self.INCIDENCES [1] - 1)][1]
 
     def get_E(self):
         self.E = self.MATERIALS[0]
@@ -232,6 +234,9 @@ class Element():
                     
                 current_colun = 0
                 current_line += 1
+                
+    def multi
+                
         """
         basicamente as current* percorrem a matrix especifica
         os linhas e colunas "calculam" onde aquele elemento da matriz especifica deve ser inserido na matrix global
