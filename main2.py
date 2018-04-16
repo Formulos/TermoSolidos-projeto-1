@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
-#import numpy as np
+import numpy as np
 
 class read_FILE():
 
@@ -85,7 +85,7 @@ class read_FILE():
 
 
         self.COORDINATES.pop(-1)
-        self.COORDINATES.pop(0)
+        self.qtd_pontos = self.COORDINATES.pop(0)
 
         self.ELEMENT_GROUPS.pop(-1)
         self.ELEMENT_GROUPS.pop(0)
@@ -101,12 +101,13 @@ class read_FILE():
 
         self.BCNODES.pop(-1)
         self.BCNODES.pop(0)
-        #self.LOADS.pop(-1)
+
+        self.qtd_forcas = self.LOADS.pop(0)
 
         self.c = []
 
 
-        #print(self.COORDINATES,self.ELEMENT_GROUPS,self.INCIDENCES,self.GEOMETRIC_PROPERTIES,self.BCNODES,self.LOADS)
+        print(self.LOADS)
 
 class Element():
     def __init__(self):
@@ -116,22 +117,25 @@ class Element():
         self.matrizes_regidez = [] #todas as matrizes de rigidez de cada elemto em uma [[[141000, 0, -141000, 0], [0, 0, 0, 0]], [[0, 0, 0, 0], [0, 188000, 0, -188000]]] listas de listas de listas triple yammy
         self.complete_liberty = [] # todos os graues de liberdade em ordem cresente de elemento
         self.higest_liberty = 0 #fala quantas linhas e colunas a matriz combal vai ter, nota: haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa please kill me
-        for i in range(len(self.file.INCIDENCES)): 
+
+
+
+        for i in range(len(self.file.INCIDENCES)):
             self.element = i
             self.INCIDENCES   = self.file.INCIDENCES[self.element]
             self.MATERIALS    = self.file.MATERIALS[self.element]
             self.PROPERTIES   = self.file.GEOMETRIC_PROPERTIES[self.element]
             self.liberty = []
-            
             self.rigidez_individual()
-            
+
         self.init_matrix_global()
         self.fill_matriz_global()
 
 
+
     def rigidez_individual(self):
-        
-        
+
+
         self.COORDINATES()
         self.get_E()
         self.get_A()
@@ -139,6 +143,8 @@ class Element():
         self.rigidez()
         self.matrixlib()
         self.results()
+        self.matrizRestructure()
+        self.matrizInversa()
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
@@ -192,11 +198,11 @@ class Element():
         for i in (self.INCIDENCES[1:]):
                 self.liberty.append((i * 2) -1)
                 self.liberty.append(i * 2)
-                
+
         temp = max(self.liberty)
         if temp > self.higest_liberty: #acha a maior liberdade
             self.higest_liberty = temp
-                    
+
         self.complete_liberty.append(self.liberty)
 
     def results(self):
@@ -207,43 +213,63 @@ class Element():
         print("Cos: ", self.cos)
         print("Propriedade: ",self.PROPERTIES)
         print("Liberdade:", self.liberty)
+        print("Liberdade Completa: ", self.complete_liberty)
         print("Rigidez: ",self.final_rigidez)
         print()
-        
+
     def init_matrix_global(self):
         self.global_matrix = []
         int_high = int(self.higest_liberty)
         for i in range(int_high):
              self.global_matrix.append([0] * int_high)
-        
-        
+
+
     def fill_matriz_global(self): # isso so demorou minha sanidade para fazer mas vou tentar explicar
         #print(self.global_matrix)
         for i in range(len(self.complete_liberty)): #percorre todos os graus de liberdade (as listas dentro dos graus de liberdade)
 
             current_colun = 0
             current_line = 0
-            
+
             for j in self.complete_liberty[i]: #percorre todos os elementos dentro de uma das listas dos graus de liberdade
                 linha = int(j) -1 #a linha que em que o elemento da matrix de rigidez especifica vai ser esse
-                
+
                 for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
                     coluna = int(h) -1 #a coluna do elemento da matriz de rigidez não global vai ser esse
                     self.global_matrix[linha][coluna] += self.matrizes_regidez[i][current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
                     current_colun += 1
-                    
+
                 current_colun = 0
                 current_line += 1
-                
-    def multi
-                
+
+
         """
         basicamente as current* percorrem a matrix especifica
         os linhas e colunas "calculam" onde aquele elemento da matriz especifica deve ser inserido na matrix global
         """
-                
+
         print("Matriz global final:",self.global_matrix)
-                
+
+        def matrizRestructure(self):
+            loads_matrix = [1500, -1000, 0, 0, 0, 0]
+            nodes = self.file.BCNODES
+            self.matrixCut = np.array(self.global_matrix)
+            self.loadCut = np.array(self.loads_matrix)
+
+            for i in nodes:
+                self.matrixCut = np.delete(self.matrixCut,(i[0])-1,0)
+                self.matrixCut = np.delete(self.matrixCut,(i[0])-1,1)
+                self.loadCut = np.delete(self.loadCut,(i[0])-1,0)
+
+
+        def matrizInversa(self):
+            print("Matriz Cortada: ", self.matrixCut)
+            deter = det(self.matrixCut)
+            print("determinante:", deter)
+            inversa = inv(self.matrizCortada)
+            desloc = np.matmul(inversa, self.loadCut)
+            print("Deslocamento: ", desloc)
+
 
 
 Element()
