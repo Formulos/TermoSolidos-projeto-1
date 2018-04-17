@@ -130,8 +130,9 @@ class Element():
 
         self.init_matrix_global()
         self.fill_matriz_global()
-        self.matrizRestructure()
-        self.matrizInversa()
+        self.loads()
+        self.cdc()
+
 
 
     def rigidez_individual(self):
@@ -229,18 +230,18 @@ class Element():
         for i in range(len(self.complete_liberty)): #percorre todos os graus de liberdade (as listas dentro dos graus de liberdade)
 
             current_colun = 0
-            current_line = 0
+            self.current_line = 0
 
             for j in self.complete_liberty[i]: #percorre todos os elementos dentro de uma das listas dos graus de liberdade
                 linha = int(j) -1 #a linha que em que o elemento da matrix de rigidez especifica vai ser esse
 
                 for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
                     coluna = int(h) -1 #a coluna do elemento da matriz de rigidez não global vai ser esse
-                    self.global_matrix[linha][coluna] += self.matrizes_regidez[i][current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
+                    self.global_matrix[linha][coluna] += self.matrizes_regidez[i][self.current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
                     current_colun += 1
 
                 current_colun = 0
-                current_line += 1
+                self.current_line += 1
 
 
         """
@@ -250,25 +251,35 @@ class Element():
 
         print("Matriz global final:",self.global_matrix)
 
-    def matrizRestructure(self):
-        self.loads_matrix = [1500, -1000, 0, 0, 0, 0]
-        nodes = self.file.BCNODES
-        self.matrixCut = np.array(self.global_matrix)
-        self.loadCut = np.array(self.loads_matrix)
+    def loads(self): #ler a explicacao pedro
 
-        for i in nodes:
-            self.matrixCut = np.delete(self.matrixCut,(i[0])-1,0)
-            self.matrixCut = np.delete(self.matrixCut,(i[0])-1,1)
-            self.loadCut = np.delete(self.loadCut,(i[0])-1,0)
+        """aqui tem uma matriz de zeros com o tamanho definido por essa variavel que o Paulo cria na global.
+            Ela tem que ser um vetor, e nao uma lista, entao o segundo argumento eh 1, para fazer uma listas
+            de listas. """
+
+        self.loads_matrix = np.zeros((int(self.higest_liberty), 1))
+
+        """Aqui vamos iterar pela quantidade de forcas, essa variavel eh definida quando o Paulo
+        da POP na hora de fazer a matriz quando ele ta lendo o TXT"""
+
+        for i in range(int(self.file.qtd_forcas[0])):
+            value = self.file.LOADS[i][2] #forca
+            indice = int(self.file.LOADS[i][0]) #indice
+            """Aqui vamos ver se a forca esta em x (1) ou y (2)"""
+            if(self.file.LOADS[i][1] == 1.0):
+                self.loads_matrix[(indice*2)-2][0] = value
+            if(self.file.LOADS[i][1] == 2.0):
+                self.loads_matrix[(indice*2)-1][0] = value
+
+            """Por fim, para cada indice lido do txt na parte de LOADS,
+            voce coloca o valor da forca na posicao certa do vetor"""
+
+        print(self.loads_matrix)
 
 
-    def matrizInversa(self):
-        print("Matriz Cortada: ", self.matrixCut)
-        deter = np.linalg.det(self.matrixCut)
-        print("determinante:", deter)
-        inversa = np.linalg.inv(self.matrixCut)
-        self.desloc = np.matmul(inversa, self.loadCut)
-        print("Deslocamento: ", self.desloc)
+    def cdc(self):
+        print("condicoes de contorno")
+"""Jacob e Gauss aqui (pode ser por import tambem)"""
 
 
 class write_FILE():
@@ -283,8 +294,9 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-        for i in range(len(self.file.INCIDENCES)-1):
-            self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
+        self.saida.write(str(self.file.qtd_pontos) + "\n")
+        #for i in range(len(self.file.INCIDENCES)-1):
+            #self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
 
