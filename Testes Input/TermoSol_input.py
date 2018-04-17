@@ -116,7 +116,6 @@ while(True):
                 print("porra")
                 incidency = int(incidency)
                 file.write("*INCIDENCES"+" \n")
-                file.write(str(incidency)+" \n")
                 print("Modelo de input: (inicio) (fim)")
                 i = 1
                 while (i < incidency + 1):
