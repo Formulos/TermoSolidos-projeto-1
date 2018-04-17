@@ -282,19 +282,19 @@ class Element():
         self.global_cut = np.array(self.global_matrix)
         self.loads_cut = np.array(self.loads_matrix)
 
-        for node in self.file.BCNODES:
-            print(node)
-            if(node[1] == 1):
-                self.global_cut = np.delete(self.global_cut,(node[0]*2)-1 ,0)
-                self.global_cut = np.delete(self.global_cut,(node[0]*2) -1 ,1)
-                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-1),0)
+        for self.node in self.file.BCNODES:
+            print(self.node)
+            if(self.node[1] == 1):
+                self.global_cut = np.delete(self.global_cut,(self.node[0]*2)-1 ,0)
+                self.global_cut = np.delete(self.global_cut,(self.node[0]*2) -1 ,1)
+                self.loads_cut = np.delete(self.loads_cut,(self.node[0]*2-1),0)
 
 
 
-            elif(node[1] == 2):
-                self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,0)
-                self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,1)
-                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-2),0)
+            elif(self.node[1] == 2):
+                self.global_cut = np.delete(self.global_cut,(self.node[0]*2)-2 ,0)
+                self.global_cut = np.delete(self.global_cut,(self.node[0]*2)-2 ,1)
+                self.loads_cut = np.delete(self.loads_cut,(self.node[0]*2-2),0)
 
 
 
@@ -315,7 +315,8 @@ class write_FILE():
         self.saida = open("Saida.txt","w")
         self.write()
         self.saida.close()
-
+        self.reaction()
+        
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
 
@@ -329,6 +330,22 @@ class write_FILE():
         self.saida.write("*REACTION_FORCES\n")
 
 
+    def reaction(self):
+        indice = ((int(self.E.higest_liberty)),1)
+        tmp = 0
+        self.umatrix = np.zeros(indice)
 
+        for i in range(len(self.file.BCNODES)):
+            self.umatrix[i] = 1
 
+        for i in range(int(self.E.higest_liberty)):
+            if(self.umatrix[i] == 1):
+                self.umatrix[i] = 0
+
+            elif(self.umatrix[i] == 0):
+                self.umatrix[i] = self.E.deslocamentos[tmp]
+                tmp += 1
+
+        self.reaction = np.matmul(self.E.global_matrix, self.umatrix)
+        print(self.reaction)
 write_FILE()
