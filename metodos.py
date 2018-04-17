@@ -46,8 +46,10 @@ def gauss(A,b,max_interacao = 1000,covergencia = 1e-18):
     
     print("solução: {0}".format(x))
     
+    return x
+    
 gauss(A,b)
-def Jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
+def jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
 
     
     # matriz temporaria
@@ -73,5 +75,6 @@ def Jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
         x = x_last
     
     print("solução: {0}".format(x))
+    return x
     
-Jacobe(A,b)
+jacobe(A,b)

@@ -2,6 +2,7 @@
 
 import math
 import numpy as np
+import metodos
 
 class read_FILE():
 
@@ -280,8 +281,6 @@ class Element():
         #condicoes de contorno para matriz global
         self.global_cut = np.array(self.global_matrix)
         self.loads_cut = np.array(self.loads_matrix)
-        print(self.loads_cut)
-        print(self.file.BCNODES)
 
         for node in self.file.BCNODES:
             print(node)
@@ -291,7 +290,6 @@ class Element():
                 self.loads_cut = np.delete(self.loads_cut,(node[0]*2-1),0)
 
 
-                print("global cut ", self.loads_cut)
 
             elif(node[1] == 2):
                 self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,0)
@@ -299,12 +297,13 @@ class Element():
                 self.loads_cut = np.delete(self.loads_cut,(node[0]*2-2),0)
 
 
-                print("globalcut", self.loads_cut)
 
-
-        print(self.loads_cut)
-        print(self.global_cut)
-
+        print(self.loads_cut) #b
+        print(self.global_cut) #A
+        
+        self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
+        
+        
 """Jacob e Gauss aqui (pode ser por import tambem)"""
 
 
