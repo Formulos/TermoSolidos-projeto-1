@@ -288,18 +288,18 @@ class Element():
             if(node[1] == 1):
                 self.global_cut = np.delete(self.global_cut,(node[0]*2)-1 ,0)
                 self.global_cut = np.delete(self.global_cut,(node[0]*2) -1 ,1)
-                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-2),0)
+                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-1),0)
 
 
-                print("global cut ", self.global_cut)
+                print("global cut ", self.loads_cut)
 
             elif(node[1] == 2):
                 self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,0)
                 self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,1)
-                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-1),0)
+                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-2),0)
 
 
-                print("globalcut", self.global_cut)
+                print("globalcut", self.loads_cut)
 
 
         print(self.loads_cut)
