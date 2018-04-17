@@ -312,11 +312,12 @@ class write_FILE():
     def __init__(self):
         self.E = Element()
         self.file = read_FILE()
+        self.reaction()
         self.saida = open("Saida.txt","w")
         self.write()
         self.saida.close()
-        self.reaction()
-        
+
+
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
 
@@ -328,6 +329,11 @@ class write_FILE():
         self.saida.write("*ELEMENT_STRESSES\n")
 
         self.saida.write("*REACTION_FORCES\n")
+        for i in range(len(self.file.BCNODES)):
+            if(self.file.BCNODES[i][1] == 1.0):
+                self.saida.write("FX {} {}\n".format(int(self.file.BCNODES[i][0]), self.reaction[int(self.file.BCNODES[i][0] * 2) - 2][0]))
+            else:
+                self.saida.write("FY {} {}\n".format(int(self.file.BCNODES[i][0]), self.reaction[int(self.file.BCNODES[i][0] * 2) - 1][0]))
 
 
     def reaction(self):
