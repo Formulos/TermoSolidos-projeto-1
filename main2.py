@@ -130,7 +130,8 @@ class Element():
 
         self.init_matrix_global()
         self.fill_matriz_global()
-
+        self.matrizRestructure()
+        self.matrizInversa()
 
 
     def rigidez_individual(self):
@@ -143,8 +144,7 @@ class Element():
         self.rigidez()
         self.matrixlib()
         self.results()
-        self.matrizRestructure()
-        self.matrizInversa()
+
 
     def COORDINATES(self):
         self.c = [[0,0],[0,0]]
@@ -250,25 +250,25 @@ class Element():
 
         print("Matriz global final:",self.global_matrix)
 
-        def matrizRestructure(self):
-            loads_matrix = [1500, -1000, 0, 0, 0, 0]
-            nodes = self.file.BCNODES
-            self.matrixCut = np.array(self.global_matrix)
-            self.loadCut = np.array(self.loads_matrix)
+    def matrizRestructure(self):
+        self.loads_matrix = [1500, -1000, 0, 0, 0, 0]
+        nodes = self.file.BCNODES
+        self.matrixCut = np.array(self.global_matrix)
+        self.loadCut = np.array(self.loads_matrix)
 
-            for i in nodes:
-                self.matrixCut = np.delete(self.matrixCut,(i[0])-1,0)
-                self.matrixCut = np.delete(self.matrixCut,(i[0])-1,1)
-                self.loadCut = np.delete(self.loadCut,(i[0])-1,0)
+        for i in nodes:
+            self.matrixCut = np.delete(self.matrixCut,(i[0])-1,0)
+            self.matrixCut = np.delete(self.matrixCut,(i[0])-1,1)
+            self.loadCut = np.delete(self.loadCut,(i[0])-1,0)
 
 
-        def matrizInversa(self):
-            print("Matriz Cortada: ", self.matrixCut)
-            deter = det(self.matrixCut)
-            print("determinante:", deter)
-            inversa = inv(self.matrizCortada)
-            desloc = np.matmul(inversa, self.loadCut)
-            print("Deslocamento: ", desloc)
+    def matrizInversa(self):
+        print("Matriz Cortada: ", self.matrixCut)
+        deter = np.linalg.det(self.matrixCut)
+        print("determinante:", deter)
+        inversa = np.linalg.inv(self.matrixCut)
+        desloc = np.matmul(inversa, self.loadCut)
+        print("Deslocamento: ", desloc)
 
 
 
