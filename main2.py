@@ -101,9 +101,11 @@ class read_FILE():
 
         self.BCNODES.pop(-1)
         self.BCNODES.pop(0)
-        #self.LOADS.pop(-1)
+        
+        self.qtd_forcas =  self.LOADS.pop(0)
 
         self.c = []
+        
 
 
         #print(self.COORDINATES,self.ELEMENT_GROUPS,self.INCIDENCES,self.GEOMETRIC_PROPERTIES,self.BCNODES,self.LOADS)
@@ -121,12 +123,15 @@ class Element():
             self.INCIDENCES   = self.file.INCIDENCES[self.element]
             self.MATERIALS    = self.file.MATERIALS[self.element]
             self.PROPERTIES   = self.file.GEOMETRIC_PROPERTIES[self.element]
+            self.BCNODES = self.file.BCNODES
+            self.LOADS = self.file.LOADS
             self.liberty = []
             
             self.rigidez_individual()
             
         self.init_matrix_global()
         self.fill_matriz_global()
+        self.get_loads()
 
 
     def rigidez_individual(self):
@@ -208,13 +213,17 @@ class Element():
         print("Propriedade: ",self.PROPERTIES)
         print("Liberdade:", self.liberty)
         print("Rigidez: ",self.final_rigidez)
+        
         print()
         
     def init_matrix_global(self):
         self.global_matrix = []
+        self.loads_matrix = []
         int_high = int(self.higest_liberty)
         for i in range(int_high):
-             self.global_matrix.append([0] * int_high)
+            self.global_matrix.append([0] * int_high)
+        for i in range(len(self.global_matrix[i])):
+            self.loads_matrix.append(0)
         
         
     def fill_matriz_global(self): # isso so demorou minha sanidade para fazer mas vou tentar explicar
@@ -234,16 +243,34 @@ class Element():
                     
                 current_colun = 0
                 current_line += 1
-                
-    def multi
-                
-        """
-        basicamente as current* percorrem a matrix especifica
-        os linhas e colunas "calculam" onde aquele elemento da matriz especifica deve ser inserido na matrix global
-        """
-                
+        
         print("Matriz global final:",self.global_matrix)
-                
+    
+    def get_loads(self):
+        temp = []
+        i = 0
+        print(self.LOADS)
+        for i in self.BCNODES:
+            for j in self.LOADS:
+                print("I", i)
+                print("J", j[0:-1])
+                print('--')
+                if j[0:-1] == i:
+                    temp.append(j[2])
+                    break
+        print(temp)
+        
 
 
+        #for i in range(len(self.LOADS)):
+         #   current_node = self.LOADS[i][0]
+          #  current_axis = self.LOADS[1][1]
+           # if current_axis%2 == 0:
+            #    self.loads
+           # current_value = self.LOADS[2][2]
+            #self.loads_matrix[current_node] = self.LOADS[current_node][current_value]
+            
+        #print(self.loads_matrix)        
+
+    
 Element()
