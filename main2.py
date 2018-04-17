@@ -92,7 +92,7 @@ class read_FILE():
         self.ELEMENT_GROUPS.pop(0)
 
         self.INCIDENCES.pop(-1)
-        self.INCIDENCES.pop(0)
+    #    self.INCIDENCES.pop(0)
 
         self.MATERIALS.pop(-1)
         self.MATERIALS.pop(0)
@@ -300,11 +300,10 @@ class Element():
 
         print(self.loads_cut) #b
         print(self.global_cut) #A
-        
+
         self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
-        
-        
-"""Jacob e Gauss aqui (pode ser por import tambem)"""
+        self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
+
 
 
 class write_FILE():
