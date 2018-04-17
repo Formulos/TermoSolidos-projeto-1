@@ -318,9 +318,9 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-        self.saida.write(str(self.file.qtd_pontos[0]) + "\n")
-        #for i in range(len(self.file.INCIDENCES)-1):
-            #self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
+
+        for i in range(len(self.file.INCIDENCES)-1):
+            self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
 
