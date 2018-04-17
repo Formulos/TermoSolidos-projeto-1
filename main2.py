@@ -300,7 +300,7 @@ class Element():
 
 
                 print("globalcut", self.global_cut)
-    
+
 
         print(self.loads_cut)
         print(self.global_cut)
