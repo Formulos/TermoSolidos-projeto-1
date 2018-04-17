@@ -131,8 +131,8 @@ class Element():
         self.init_matrix_global()
         self.fill_matriz_global()
         self.loads()
-        self.matrizRestructure()
-        self.matrizInversa()
+        self.cdc()
+
 
 
     def rigidez_individual(self):
@@ -276,6 +276,9 @@ class Element():
 
         print(self.loads_matrix)
 
+
+    def cdc(self):
+        print("condicoes de contorno")
 """Jacob e Gauss aqui (pode ser por import tambem)"""
 
 
@@ -291,8 +294,9 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-        for i in range(len(self.file.INCIDENCES)-1):
-            self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
+        self.saida.write(str(self.file.qtd_pontos) + "\n")
+        #for i in range(len(self.file.INCIDENCES)-1):
+            #self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
 
