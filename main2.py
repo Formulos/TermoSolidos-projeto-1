@@ -267,9 +267,32 @@ class Element():
         deter = np.linalg.det(self.matrixCut)
         print("determinante:", deter)
         inversa = np.linalg.inv(self.matrixCut)
-        desloc = np.matmul(inversa, self.loadCut)
-        print("Deslocamento: ", desloc)
+        self.desloc = np.matmul(inversa, self.loadCut)
+        print("Deslocamento: ", self.desloc)
+
+
+class write_FILE():
+
+
+    def __init__(self):
+        self.E = Element()
+        self.file = read_FILE()
+        self.saida = open("Saida.txt","w")
+        self.write()
+        self.saida.close()
+
+    def write(self):
+        self.saida.write("*DISPLACEMENTS\n")
+        for i in range(len(self.file.INCIDENCES)-1):
+            self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
+
+        self.saida.write("*ELEMENT_STRAINS\n")
+
+        self.saida.write("*ELEMENT_STRESSES\n")
+
+        self.saida.write("*REACTION_FORCES\n")
 
 
 
-Element()
+
+write_FILE()
