@@ -320,7 +320,7 @@ class write_FILE():
         self.saida.write("*DISPLACEMENTS\n")
 
         for i in range(len(self.file.INCIDENCES)-1):
-            self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i]))
+            self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i][0]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
 
