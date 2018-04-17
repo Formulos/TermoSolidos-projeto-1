@@ -274,11 +274,37 @@ class Element():
             """Por fim, para cada indice lido do txt na parte de LOADS,
             voce coloca o valor da forca na posicao certa do vetor"""
 
-        print(self.loads_matrix)
-
+            '''np.delete 0 = linha 1 = coluna'''
 
     def cdc(self):
-        print("condicoes de contorno")
+        #condicoes de contorno para matriz global
+        self.global_cut = np.array(self.global_matrix)
+        self.loads_cut = np.array(self.loads_matrix)
+        print(self.loads_cut)
+        print(self.file.BCNODES)
+
+        for node in self.file.BCNODES:
+            print(node)
+            if(node[1] == 1):
+                self.global_cut = np.delete(self.global_cut,(node[0]*2)-1 ,0)
+                self.global_cut = np.delete(self.global_cut,(node[0]*2) -1 ,1)
+                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-2),0)
+
+
+                print("global cut ", self.global_cut)
+
+            elif(node[1] == 2):
+                self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,0)
+                self.global_cut = np.delete(self.global_cut,(node[0]*2)-2 ,1)
+                self.loads_cut = np.delete(self.loads_cut,(node[0]*2-1),0)
+
+
+                print("globalcut", self.global_cut)
+    
+
+        print(self.loads_cut)
+        print(self.global_cut)
+
 """Jacob e Gauss aqui (pode ser por import tambem)"""
 
 
@@ -294,7 +320,7 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-        self.saida.write(str(self.file.qtd_pontos) + "\n")
+        self.saida.write(str(self.file.qtd_pontos[0]) + "\n")
         #for i in range(len(self.file.INCIDENCES)-1):
             #self.saida.write("{} {}\n".format(i, self.E.desloc[i]))
 
