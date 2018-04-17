@@ -108,7 +108,7 @@ class read_FILE():
         self.c = []
 
 
-        print(self.LOADS)
+        #print(self.LOADS)
 
 class Element():
     def __init__(self):
@@ -300,9 +300,10 @@ class Element():
 
         print(self.loads_cut) #b
         print(self.global_cut) #A
-
-        self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
-        self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
+        if input("APERTE 1 para jacobe, qualquer outra coisa para gauss: ") == "1":
+            self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
+        else:
+            self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
 
 
 

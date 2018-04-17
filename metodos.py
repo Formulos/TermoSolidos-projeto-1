@@ -17,7 +17,7 @@ b = np.array([6., 25., -11., 15.])
 
 #Solution: [ 1.  2. -1.  1.]
 
-def gauss(A,b,max_interacao = 1000,covergencia = 1e-18):
+def gauss(A,b,max_interacao = 1000,covergencia = 1e-20):
 
 
     # matriz temporaria
@@ -45,11 +45,12 @@ def gauss(A,b,max_interacao = 1000,covergencia = 1e-18):
         x = x_last
 
     print("solução: {0}".format(x))
+    print("erro: {0}".format(np.dot(A,x) -b))
 
     return x
 
 gauss(A,b)
-def jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
+def jacobe(A,b,max_interacao = 1000,covergencia = 1e-20):
 
 
     # matriz temporaria
@@ -59,12 +60,12 @@ def jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
     b = np.array(b)
 
 
-
     x = np.zeros_like(b)
 
     for it_count in range(max_interacao):
         x_last = np.zeros_like(x)
         for i in range(A.shape[0]):
+            
 
             u1 = np.dot(A[i, :i], x[:i])
             u2 = np.dot(A[i, i + 1:], x[i + 1:])
@@ -75,6 +76,7 @@ def jacobe(A,b,max_interacao = 1000,covergencia = 1e-18):
         x = x_last
 
     print("solução: {0}".format(x))
+    print("erro: {0}".format(np.dot(A,x) -b))
     return x
 
 jacobe(A,b)
