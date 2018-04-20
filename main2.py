@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import math
 import numpy as np
 import metodos
@@ -118,6 +116,9 @@ class Element():
         self.matrizes_regidez = [] #todas as matrizes de rigidez de cada elemto em uma [[[141000, 0, -141000, 0], [0, 0, 0, 0]], [[0, 0, 0, 0], [0, 188000, 0, -188000]]] listas de listas de listas triple yammy
         self.complete_liberty = [] # todos os graues de liberdade em ordem cresente de elemento
         self.higest_liberty = 0 #fala quantas linhas e colunas a matriz combal vai ter, nota: haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa please kill me
+        self.lenList = []
+        self.cosList = []
+        self.senList = []
 
 
 
@@ -162,10 +163,13 @@ class Element():
         self.E = self.MATERIALS[0]
 
     def get_A(self):
-        self.A = self.PROPERTIES[1]
+        self.A = self.PROPERTIES[0]
 
     def get_lengh(self):
         self.lengh = math.sqrt(pow(self.c[0][0] - self.c[1][0], 2) + pow(self.c[0][1] - self.c[1][1], 2))
+        self.lenList.append(self.lengh)
+
+
 
     def rigidez(self):
         #cosseno
@@ -175,13 +179,19 @@ class Element():
             self.cos = 0
         else:
             self.cos = abs(self.c[0][1] - self.c[1][1])/(self.lengh)
+        
+        self.cosList.append(self.cos)
         #seno
+
         if(self.c[0][1] == self.c[1][1]):
             self.sin = 0
         elif(self.c[0][0] == self.c[1][0]):
             self.sin = 1
         else:
             self.sin = abs(self.c[0][0] - self.c[1][0])/(self.lengh)
+
+        self.senList.append(self.sin)
+
         #matriz de senos e cossenos
         mds =    [[self.cos**2 , self.cos*self.sin , -self.cos**2, -self.cos*self.sin ],
                     [self.cos* self.sin  , self.sin**2 , -self.cos* self.sin , -self.sin**2 ],
@@ -244,38 +254,18 @@ class Element():
                 current_colun = 0
                 self.current_line += 1
 
-
-        """
-        basicamente as current* percorrem a matrix especifica
-        os linhas e colunas "calculam" onde aquele elemento da matriz especifica deve ser inserido na matrix global
-        """
-
         print("Matriz global final:",self.global_matrix)
 
-    def loads(self): #ler a explicacao pedro
-
-        """aqui tem uma matriz de zeros com o tamanho definido por essa variavel que o Paulo cria na global.
-            Ela tem que ser um vetor, e nao uma lista, entao o segundo argumento eh 1, para fazer uma listas
-            de listas. """
-
+    def loads(self):
         self.loads_matrix = np.zeros((int(self.higest_liberty), 1))
 
-        """Aqui vamos iterar pela quantidade de forcas, essa variavel eh definida quando o Paulo
-        da POP na hora de fazer a matriz quando ele ta lendo o TXT"""
-
         for i in range(int(self.file.qtd_forcas[0])):
-            value = self.file.LOADS[i][2] #forca
-            indice = int(self.file.LOADS[i][0]) #indice
-            """Aqui vamos ver se a forca esta em x (1) ou y (2)"""
+            value = self.file.LOADS[i][2] 
+            indice = int(self.file.LOADS[i][0])
             if(self.file.LOADS[i][1] == 1.0):
                 self.loads_matrix[(indice*2)-2][0] = value
             if(self.file.LOADS[i][1] == 2.0):
                 self.loads_matrix[(indice*2)-1][0] = value
-
-            """Por fim, para cada indice lido do txt na parte de LOADS,
-            voce coloca o valor da forca na posicao certa do vetor"""
-
-            '''np.delete 0 = linha 1 = coluna'''
 
     def cdc(self):
         #condicoes de contorno para matriz global
@@ -289,14 +279,10 @@ class Element():
                 self.global_cut = np.delete(self.global_cut,(self.node[0]*2) -1 ,1)
                 self.loads_cut = np.delete(self.loads_cut,(self.node[0]*2-1),0)
 
-
-
             elif(self.node[1] == 2):
                 self.global_cut = np.delete(self.global_cut,(self.node[0]*2)-2 ,0)
                 self.global_cut = np.delete(self.global_cut,(self.node[0]*2)-2 ,1)
                 self.loads_cut = np.delete(self.loads_cut,(self.node[0]*2-2),0)
-
-
 
         print(self.loads_cut) #b
         print(self.global_cut) #A
@@ -306,13 +292,12 @@ class Element():
             self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
 
 
-
 class write_FILE():
-
 
     def __init__(self):
         self.E = Element()
         self.file = read_FILE()
+        self.strains_and_stresses()
         self.reaction()
         self.saida = open("Saida.txt","w")
         self.write()
@@ -328,6 +313,8 @@ class write_FILE():
         self.saida.write("*ELEMENT_STRAINS\n")
 
         self.saida.write("*ELEMENT_STRESSES\n")
+        for i in range(len(self.E.lenList)):
+            self.saida.write("{} {}\n".format(i+1, self.tensoes_finais[i]))
 
         self.saida.write("*REACTION_FORCES\n")
         for i in range(len(self.file.BCNODES)):
@@ -336,6 +323,41 @@ class write_FILE():
             else:
                 self.saida.write("FY {} {}\n".format(int(self.file.BCNODES[i][0]), self.reaction[int(self.file.BCNODES[i][0] * 2) - 1][0]))
 
+    def strains_and_stresses(self):
+        strain = []
+        stress = []
+        temp = []
+        self.tensoes_finais = []
+        re = 0
+        max_indice = (4)
+        self.matrix = np.zeros(4)
+        for j in range(len(self.E.lenList)):
+            for i in range(0,2):
+                if(self.matrix[i] == 0 and re == 0):
+                    self.matrix[i] = -self.E.cosList[j]
+                    self.matrix[i+1] = -self.E.senList[j]
+                    re = 1
+                
+                elif (self.matrix[i] == 0 and re == 1):
+                    self.matrix[i+1] = self.E.cosList[j]
+                    self.matrix[i+2] = self.E.senList[j]
+            
+            new_matrix = np.zeros(int(len(self.E.deslocamentos)))
+            for k in range(len(self.E.deslocamentos)):
+                print("BBBBB", self.matrix)
+                new_matrix[k] = -self.matrix[k+1]
+            temp.append(new_matrix)
+           # print("AAAA", self.matrix)
+           # print("BBBB", new_matrix)
+           # print("CCCC", self.E.cosList)
+           # print("DDDD", self.E.senList)
+        for i in range(len(self.file.ELEMENT_GROUPS)):
+            tensao = self.E.MATERIALS[0]/self.E.lenList[i]*temp[i]
+            temp2 = []
+            temp2 = np.matmul(tensao, self.E.deslocamentos)
+            self.tensoes_finais.append(float(temp2))
+        print("AAAAA", self.tensoes_finais)
+            
 
     def reaction(self):
         indice = ((int(self.E.higest_liberty)),1)
@@ -355,4 +377,5 @@ class write_FILE():
 
         self.reaction = np.matmul(self.E.global_matrix, self.umatrix)
         print(self.reaction)
+
 write_FILE()
