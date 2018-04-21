@@ -254,16 +254,21 @@ class Element():
                 for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
                     coluna = (test - int(h))  #a coluna do elemento da matriz de rigidez não global vai ser esse
                     self.global_matrix[linha][coluna] += self.matrizes_regidez[i][self.current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
-
+                    print(self.matrizes_regidez[i][self.current_line][current_colun], "linha e coluna: ",linha,"",coluna)
+                    print("")
+                    print("Matriz global:",self.global_matrix)
+                    print("")
                     #trial[linha][coluna] = [j,h]
                     current_colun += 1
 
                 current_colun = 0
                 self.current_line += 1
         
-        self.global_matrix = self.global_matrix
-
+        #self.global_matrix = np.array(self.global_matrix)
+            #print('trial: ',i," ",trial)
+            print("")
         print("Matriz global final:",self.global_matrix)
+        sys.exit()
 
     def loads(self):
         self.loads_matrix = np.zeros((int(self.higest_liberty), 1))
@@ -351,7 +356,7 @@ class write_FILE():
                     self.matrix[i+1] = self.E.cosList[j]
                     self.matrix[i+2] = self.E.senList[j]
             
-            new_matrix = np.zeros(len(self.E.deslocamentos))
+            new_matrix = np.zeros(int(len(self.E.deslocamentos)))
             for k in range(len(self.E.deslocamentos)):
                 print("BBBBB", self.matrix)
                 new_matrix[k] = -self.matrix[k+1]
