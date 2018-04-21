@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 import numpy as np
 import metodos
@@ -106,8 +107,8 @@ class read_FILE():
         self.c = []
 
 
-        #print(self.LOADS)
-
+        #print("oi: ",self.COORDINATES,self.ELEMENT_GROUPS,self.INCIDENCES,self.MATERIALS,self.GEOMETRIC_PROPERTIES,self.BCNODES,self.LOADS)
+        
 class Element():
     def __init__(self):
         self.file = read_FILE()
@@ -203,6 +204,7 @@ class Element():
             for j in i:
                 matriz_intermediaria.append(int((self.E * self.A) / self.lengh)*j)
             self.final_rigidez.append(matriz_intermediaria)
+        
         self.matrizes_regidez.append(self.final_rigidez)
 
     def matrixlib(self):
@@ -237,21 +239,27 @@ class Element():
 
     def fill_matriz_global(self): # isso so demorou minha sanidade para fazer mas vou tentar explicar
         #print(self.global_matrix)
+        test = int(self.higest_liberty)
         for i in range(len(self.complete_liberty)): #percorre todos os graus de liberdade (as listas dentro dos graus de liberdade)
-
             current_colun = 0
             self.current_line = 0
-
+            
+            
             for j in self.complete_liberty[i]: #percorre todos os elementos dentro de uma das listas dos graus de liberdade
-                linha = int(j) -1 #a linha que em que o elemento da matrix de rigidez especifica vai ser esse
+                linha = (test - int(j))  #a linha que em que o elemento da matrix de rigidez especifica vai ser esse
+               
 
                 for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
-                    coluna = int(h) -1 #a coluna do elemento da matriz de rigidez não global vai ser esse
+                    coluna = (test - int(h))  #a coluna do elemento da matriz de rigidez não global vai ser esse
                     self.global_matrix[linha][coluna] += self.matrizes_regidez[i][self.current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
+
+                    #trial[linha][coluna] = [j,h]
                     current_colun += 1
 
                 current_colun = 0
                 self.current_line += 1
+        
+        self.global_matrix = self.global_matrix
 
         print("Matriz global final:",self.global_matrix)
 
@@ -285,7 +293,7 @@ class Element():
 
         print(self.loads_cut) #b
         print(self.global_cut) #A
-        if input("APERTE 1 para jacobe, qualquer outra coisa para gauss: ") == "1":
+        if input("Insira 1 para o método de Jacobi ou insira qualquer outro valor para o método de Gauss: ") == "1":
             self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
         else:
             self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
@@ -305,14 +313,15 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-
         for i in range(len(self.file.INCIDENCES)-1):
             self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i][0]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
+        for i in range(len(self.deformacoes_finais)):
+            self.saida.write("{} {}\n".format(i+1, self.deformacoes_finais[i]))
 
         self.saida.write("*ELEMENT_STRESSES\n")
-        for i in range(len(self.E.lenList)):
+        for i in range(len(self.tensoes_finais)):
             self.saida.write("{} {}\n".format(i+1, self.tensoes_finais[i]))
 
         self.saida.write("*REACTION_FORCES\n")
@@ -327,6 +336,7 @@ class write_FILE():
         stress = []
         temp = []
         self.tensoes_finais = []
+        self.deformacoes_finais = []
         re = 0
         max_indice = (4)
         self.matrix = np.zeros(4)
@@ -340,22 +350,21 @@ class write_FILE():
                 elif (self.matrix[i] == 0 and re == 1):
                     self.matrix[i+1] = self.E.cosList[j]
                     self.matrix[i+2] = self.E.senList[j]
-            print("aaaaaaaaaaaaaaaaaaaa", self.matrix)
+
             new_matrix = np.zeros(int(len(self.E.lenList)))
-            for k in range(len(self.E.lenList)):
-                print("BBBBB", self.matrix)
+            for k in range(len(self.matrix)):
                 new_matrix[k] = -self.matrix[k]
             temp.append(new_matrix)
-           # print("AAAA", self.matrix)
-           # print("BBBB", new_matrix)
-           # print("CCCC", self.E.cosList)
-           # print("DDDD", self.E.senList)
+
         for i in range(len(self.file.ELEMENT_GROUPS)):
-            tensao = self.E.MATERIALS[0]/self.E.lenList[i]*temp[i]
+            deformação = self.E.lenList[i]*temp[i]
+            tensao = self.E.MATERIALS[0]/deformação
+            temp1 = []
             temp2 = []
+            temp1 = np.matmul(deformação, self.E.deslocamentos)
             temp2 = np.matmul(tensao, self.E.deslocamentos)
             self.tensoes_finais.append(float(temp2))
-        print("AAAAA", self.tensoes_finais)
+            self.deformacoes_finais.append(float(temp1))
             
 
     def reaction(self):
@@ -377,13 +386,5 @@ class write_FILE():
         self.reaction = np.matmul(self.E.global_matrix, self.umatrix)
         print(self.reaction)
 
-
-        print("Incidencias", self.E.INCIDENCES[1])
-        print("Materiais", self.E.MATERIALS)
-        print("Propriedades", self.E.PROPERTIES)
-        print("BCNODES", self.file.BCNODES)
-        print("LOADS", self.file.LOADS)
-        print("LOADSMATRIX", self.E.loads_matrix)
-        print("aaaa", self.E.c)
 
 write_FILE()
