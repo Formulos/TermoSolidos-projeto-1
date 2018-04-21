@@ -2,11 +2,12 @@
 import math
 import numpy as np
 import metodos
+import sys
 
 class read_FILE():
 
     def __init__(self):
-        self.load("InputProj.txt")
+        self.load("TermoSol.txt")
 
     def load(self, file):
 
@@ -137,6 +138,7 @@ class Element():
         self.cdc()
 
 
+
     def rigidez_individual(self):
 
 
@@ -252,16 +254,21 @@ class Element():
                 for h in self.complete_liberty[i]: #percorre todos os elementos novamente agente vai estar fazendo basicamente a permutação de todos os elementos
                     coluna = (test - int(h))  #a coluna do elemento da matriz de rigidez não global vai ser esse
                     self.global_matrix[linha][coluna] += self.matrizes_regidez[i][self.current_line][current_colun] #pega aonde o elemento deveria ir e soma oque ja esta la com o elemento da matrix de rigidez não global
-
+                    print(self.matrizes_regidez[i][self.current_line][current_colun], "linha e coluna: ",linha,"",coluna)
+                    print("")
+                    print("Matriz global:",self.global_matrix)
+                    print("")
                     #trial[linha][coluna] = [j,h]
                     current_colun += 1
 
                 current_colun = 0
                 self.current_line += 1
         
-        self.global_matrix = self.global_matrix
-
+        #self.global_matrix = np.array(self.global_matrix)
+            #print('trial: ',i," ",trial)
+            print("")
         print("Matriz global final:",self.global_matrix)
+        sys.exit()
 
     def loads(self):
         self.loads_matrix = np.zeros((int(self.higest_liberty), 1))
@@ -293,7 +300,7 @@ class Element():
 
         print(self.loads_cut) #b
         print(self.global_cut) #A
-        if input("Insira 1 para o método de Jacobi ou insira qualquer outro valor para o método de Gauss: ") == "1":
+        if input("APERTE 1 para jacobe, qualquer outra coisa para gauss: ") == "1":
             self.deslocamentos = metodos.jacobe(self.global_cut,self.loads_cut)
         else:
             self.deslocamentos = metodos.gauss(self.global_cut,self.loads_cut)
@@ -313,15 +320,14 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
+
         for i in range(len(self.file.INCIDENCES)-1):
             self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i][0]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
-        for i in range(len(self.deformacoes_finais)):
-            self.saida.write("{} {}\n".format(i+1, self.deformacoes_finais[i]))
 
         self.saida.write("*ELEMENT_STRESSES\n")
-        for i in range(len(self.tensoes_finais)):
+        for i in range(len(self.E.lenList)):
             self.saida.write("{} {}\n".format(i+1, self.tensoes_finais[i]))
 
         self.saida.write("*REACTION_FORCES\n")
@@ -336,7 +342,6 @@ class write_FILE():
         stress = []
         temp = []
         self.tensoes_finais = []
-        self.deformacoes_finais = []
         re = 0
         max_indice = (4)
         self.matrix = np.zeros(4)
@@ -350,20 +355,23 @@ class write_FILE():
                 elif (self.matrix[i] == 0 and re == 1):
                     self.matrix[i+1] = self.E.cosList[j]
                     self.matrix[i+2] = self.E.senList[j]
-            new_matrix = np.zeros(int(len(self.E.lenList)))
-            for k in range(len(self.matrix)):
-                new_matrix[k] = -self.matrix[k]
+            
+            new_matrix = np.zeros(int(len(self.E.deslocamentos)))
+            for k in range(len(self.E.deslocamentos)):
+                print("BBBBB", self.matrix)
+                new_matrix[k] = -self.matrix[k+1]
             temp.append(new_matrix)
-
+           # print("AAAA", self.matrix)
+           # print("BBBB", new_matrix)
+           # print("CCCC", self.E.cosList)
+           # print("DDDD", self.E.senList)
         for i in range(len(self.file.ELEMENT_GROUPS)):
-            deformação = self.E.lenList[i]*temp[i]
-            tensao = self.E.MATERIALS[0]/deformação
-            temp1 = []
+            tensao = self.E.MATERIALS[0]/self.E.lenList[i]*temp[i]
             temp2 = []
-            temp1 = np.matmul(deformação, self.E.deslocamentos)
             temp2 = np.matmul(tensao, self.E.deslocamentos)
             self.tensoes_finais.append(float(temp2))
-            self.deformacoes_finais.append(float(temp1))       
+        print("AAAAA", self.tensoes_finais)
+            
 
     def reaction(self):
         indice = ((int(self.E.higest_liberty)),1)
@@ -383,6 +391,5 @@ class write_FILE():
 
         self.reaction = np.matmul(self.E.global_matrix, self.umatrix)
         print(self.reaction)
-
 
 write_FILE()

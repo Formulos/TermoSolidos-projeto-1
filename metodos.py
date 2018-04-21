@@ -49,7 +49,7 @@ def gauss(A,b,max_interacao = 1000,covergencia = 1e-20):
 
     return x
 
-gauss(A,b)
+#gauss(A,b)
 def jacobe(A,b,max_interacao = 1000,covergencia = 1e-20):
 
 
@@ -79,4 +79,4 @@ def jacobe(A,b,max_interacao = 1000,covergencia = 1e-20):
     print("erro: {0}".format(np.dot(A,x) -b))
     return x
 
-jacobe(A,b)
+#jacobe(A,b)
