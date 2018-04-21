@@ -313,14 +313,15 @@ class write_FILE():
 
     def write(self):
         self.saida.write("*DISPLACEMENTS\n")
-
         for i in range(len(self.file.INCIDENCES)-1):
             self.saida.write("{} {}\n".format(i+1, self.E.deslocamentos[i][0]))
 
         self.saida.write("*ELEMENT_STRAINS\n")
+        for i in range(len(self.deformacoes_finais)):
+            self.saida.write("{} {}\n".format(i+1, self.deformacoes_finais[i]))
 
         self.saida.write("*ELEMENT_STRESSES\n")
-        for i in range(len(self.E.lenList)):
+        for i in range(len(self.tensoes_finais)):
             self.saida.write("{} {}\n".format(i+1, self.tensoes_finais[i]))
 
         self.saida.write("*REACTION_FORCES\n")
@@ -335,6 +336,7 @@ class write_FILE():
         stress = []
         temp = []
         self.tensoes_finais = []
+        self.deformacoes_finais = []
         re = 0
         max_indice = (4)
         self.matrix = np.zeros(4)
@@ -351,7 +353,8 @@ class write_FILE():
 
             print("aaaaaaaaaaaaaaaaaaaa", self.matrix)
             new_matrix = np.zeros(int(len(self.E.lenList)))
-            for k in range(len(self.E.lenList)):
+            for k in range(len(self.matrix)):
+                print(len(self.E.lenList))
                 print("BBBBB", self.matrix)
                 new_matrix[k] = -self.matrix[k]
             temp.append(new_matrix)
@@ -360,10 +363,14 @@ class write_FILE():
            # print("CCCC", self.E.cosList)
            # print("DDDD", self.E.senList)
         for i in range(len(self.file.ELEMENT_GROUPS)):
-            tensao = self.E.MATERIALS[0]/self.E.lenList[i]*temp[i]
+            deformação = self.E.lenList[i]*temp[i]
+            tensao = self.E.MATERIALS[0]/deformação
+            temp1 = []
             temp2 = []
+            temp1 = np.matmul(deformação, self.E.deslocamentos)
             temp2 = np.matmul(tensao, self.E.deslocamentos)
             self.tensoes_finais.append(float(temp2))
+            self.deformacoes_finais.append(float(temp1))
         print("AAAAA", self.tensoes_finais)
             
 
