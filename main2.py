@@ -2,12 +2,11 @@
 import math
 import numpy as np
 import metodos
-import sys
 
 class read_FILE():
 
     def __init__(self):
-        self.load("TermoSol.txt")
+        self.load("InputProj.txt")
 
     def load(self, file):
 
@@ -136,7 +135,6 @@ class Element():
         self.fill_matriz_global()
         self.loads()
         self.cdc()
-
 
 
     def rigidez_individual(self):
@@ -350,11 +348,12 @@ class write_FILE():
                 elif (self.matrix[i] == 0 and re == 1):
                     self.matrix[i+1] = self.E.cosList[j]
                     self.matrix[i+2] = self.E.senList[j]
-            
-            new_matrix = np.zeros(len(self.E.deslocamentos))
-            for k in range(len(self.E.deslocamentos)):
+
+            print("aaaaaaaaaaaaaaaaaaaa", self.matrix)
+            new_matrix = np.zeros(int(len(self.E.lenList)))
+            for k in range(len(self.E.lenList)):
                 print("BBBBB", self.matrix)
-                new_matrix[k] = -self.matrix[k+1]
+                new_matrix[k] = -self.matrix[k]
             temp.append(new_matrix)
            # print("AAAA", self.matrix)
            # print("BBBB", new_matrix)
@@ -386,5 +385,14 @@ class write_FILE():
 
         self.reaction = np.matmul(self.E.global_matrix, self.umatrix)
         print(self.reaction)
+
+
+        print("Incidencias", self.E.INCIDENCES[1])
+        print("Materiais", self.E.MATERIALS)
+        print("Propriedades", self.E.PROPERTIES)
+        print("BCNODES", self.file.BCNODES)
+        print("LOADS", self.file.LOADS)
+        print("LOADSMATRIX", self.E.loads_matrix)
+        print("aaaa", self.E.c)
 
 write_FILE()
